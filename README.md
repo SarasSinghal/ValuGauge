@@ -1,6 +1,6 @@
 # 🚗 ValuGauge – AI-Powered Used Car Price Prediction Platform
 Website Link-https://valugauge.onrender.com/login
-ValuGauge is a full-stack Machine Learning web application that predicts the resale value of used cars based on key vehicle attributes such as manufacturer, model, year of purchase, fuel type, and kilometers driven.
+#ValuGauge is a full-stack Machine Learning web application that predicts the resale value of used cars based on key vehicle attributes such as manufacturer, model, year of purchase, fuel type, and kilometers driven.
 
 The platform combines a trained Machine Learning regression model with a modern Flask-based web application, allowing users to instantly estimate the market value of their vehicles through an intuitive and user-friendly interface.
 
