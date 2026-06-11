@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block title %}Valuation{% endblock %}
+{% block page_class %}page--predict{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-head">
+        <p class="page-head__eyebrow">Resale valuation tool</p>
+        <h1 class="page-head__title">What's your car worth today?</h1>
+        <p class="page-head__sub">Fill in the details exactly as they describe your vehicle. Every field below is required by the pricing model.</p>
+    </div>
+
+    <div class="predict-grid">
+        <section class="card spec-card">
+            <h2 class="card__title">Vehicle details</h2>
+            <form method="POST" action="{{ url_for('predict') }}" class="form" id="predictForm" novalidate>
+
+                <div class="field">
+                    <label for="company">Manufacturer <span class="req">*</span></label>
+                    <select id="company" name="company" required>
+                        <option value="" disabled {% if not request.form.get('company') %}selected{% endif %}>Select manufacturer</option>
+                        {% for c in companies %}
+                        <option value="{{ c }}" {% if request.form.get('company')==c %}selected{% endif %}>{{ c }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="car_model">Model <span class="req">*</span></label>
+                    <select id="car_model" name="car_model" required disabled data-selected="{{ request.form.get('car_model','') }}">
+                        <option value="" disabled selected>Select manufacturer first</option>
+                    </select>
+                    <span class="field__hint">Listed as brand + model series (variant/trim isn't required).</span>
+                </div>
+
+                <div class="field-row">
+                    <div class="field">
+                        <label for="year">Year of purchase <span class="req">*</span></label>
+                        <select id="year" name="year" required>
+                            <option value="" disabled {% if not request.form.get('year') %}selected{% endif %}>Select year</option>
+                            {% for y in years %}
+                            <option value="{{ y }}" {% if request.form.get('year')==y|string %}selected{% endif %}>{{ y }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="fuel_type">Fuel type <span class="req">*</span></label>
+                        <select id="fuel_type" name="fuel_type" required>
+                            <option value="" disabled {% if not request.form.get('fuel_type') %}selected{% endif %}>Select fuel type</option>
+                            {% for f in fuel_types %}
+                            <option value="{{ f }}" {% if request.form.get('fuel_type')==f %}selected{% endif %}>{{ f }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="kms_driven">Kilometres driven <span class="req">*</span></label>
+                    <input type="number" id="kms_driven" name="kms_driven" min="0" max="1000000" step="1"
+                           placeholder="e.g. 45000" required
+                           value="{{ request.form.get('kms_driven','') }}">
+                    <span class="field__hint">Total odometer reading, in kilometres.</span>
+                </div>
+
+                <button type="submit" class="btn btn--primary btn--block">Get valuation</button>
+            </form>
+        </section>
+
+        <section class="card readout-card" id="readoutCard" data-price="{{ result.price if result else '' }}">
+            {% if result %}
+            <p class="readout-card__eyebrow">Estimated resale value</p>
+            <div class="gauge-wrap">
+                <svg viewBox="0 0 240 150" class="gauge" id="resultGauge">
+                    <path d="M20 130 A100 100 0 0 1 220 130" fill="none" stroke="#2A2F38" stroke-width="14" stroke-linecap="round"/>
+                    <path d="M20 130 A100 100 0 0 1 220 130" fill="none" stroke="#3DDC97" stroke-width="14" stroke-linecap="round"
+                          id="gaugeArc" stroke-dasharray="314" stroke-dashoffset="314"/>
+                    <line x1="120" y1="130" x2="120" y2="40" stroke="#FF5A36" stroke-width="4" stroke-linecap="round" id="gaugeNeedle" style="transform-origin: 120px 130px;"/>
+                    <circle cx="120" cy="130" r="8" fill="#ECEEF1"/>
+                </svg>
+                <div class="gauge-readout">
+                    <span class="gauge-readout__currency">₹</span>
+                    <span class="gauge-readout__value" id="gaugeValue" data-target="{{ result.price }}">0</span>
+                </div>
+            </div>
+
+            <dl class="readout-specs">
+                <div><dt>Manufacturer</dt><dd>{{ result.company }}</dd></div>
+                <div><dt>Model</dt><dd>{{ result.car_model }}</dd></div>
+                <div><dt>Year</dt><dd>{{ result.year }}</dd></div>
+                <div><dt>Driven</dt><dd>{{ "{:,}".format(result.kms_driven) }} km</dd></div>
+                <div><dt>Fuel</dt><dd>{{ result.fuel_type }}</dd></div>
+            </dl>
+
+            <p class="readout-card__note">This is an automated estimate based on historical listing data and should be used as a starting point for negotiation, not a guaranteed sale price.</p>
+            <a href="{{ url_for('history') }}" class="link-arrow">View valuation history &rarr;</a>
+            {% else %}
+            <div class="readout-empty">
+                <svg viewBox="0 0 240 150" class="gauge gauge--idle">
+                    <path d="M20 130 A100 100 0 0 1 220 130" fill="none" stroke="#2A2F38" stroke-width="14" stroke-linecap="round"/>
+                    <line x1="120" y1="130" x2="120" y2="40" stroke="#444B58" stroke-width="4" stroke-linecap="round"/>
+                    <circle cx="120" cy="130" r="8" fill="#444B58"/>
+                </svg>
+                <h2 class="readout-empty__title">Your estimate will appear here</h2>
+                <p class="readout-empty__text">Complete the form with your vehicle's manufacturer, model, year, mileage and fuel type, then select <strong>Get valuation</strong>.</p>
+            </div>
+            {% endif %}
+        </section>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    window.COMPANY_MODELS_URL = "{{ url_for('api_models', company='__COMPANY__') }}";
+</script>
+{% endblock %}

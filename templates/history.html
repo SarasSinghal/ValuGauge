@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}History{% endblock %}
+{% block page_class %}page--history{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-head">
+        <p class="page-head__eyebrow">Your records</p>
+        <h1 class="page-head__title">Valuation history</h1>
+        <p class="page-head__sub">Every estimate you've generated with this account, most recent first.</p>
+    </div>
+
+    {% if records %}
+    <div class="card table-card">
+        <div class="table-wrap">
+            <table class="log-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Manufacturer</th>
+                        <th>Model</th>
+                        <th>Year</th>
+                        <th>Driven</th>
+                        <th>Fuel</th>
+                        <th class="align-right">Estimate</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in records %}
+                    <tr>
+                        <td data-label="Date">{{ r.created_at.strftime('%d %b %Y, %H:%M') }}</td>
+                        <td data-label="Manufacturer">{{ r.company }}</td>
+                        <td data-label="Model">{{ r.car_model }}</td>
+                        <td data-label="Year">{{ r.year }}</td>
+                        <td data-label="Driven">{{ "{:,}".format(r.kms_driven) }} km</td>
+                        <td data-label="Fuel">{{ r.fuel_type }}</td>
+                        <td data-label="Estimate" class="align-right mono">&#8377;{{ "{:,.0f}".format(r.predicted_price) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <div class="card empty-card">
+        <h2>No valuations yet</h2>
+        <p>Run your first estimate to see it logged here.</p>
+        <a href="{{ url_for('predict') }}" class="btn btn--primary">Get a valuation</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

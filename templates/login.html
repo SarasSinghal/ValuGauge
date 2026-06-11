@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Sign in{% endblock %}
+{% block body_class %}auth-body{% endblock %}
+
+{% block content %}
+<div class="auth">
+    <div class="auth__panel auth__panel--brand">
+        <div class="auth__brand">
+            <span class="brand__mark brand__mark--lg" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="30" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.4"/>
+                    <path d="M12 12L16 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                    <circle cx="12" cy="12" r="1.4" fill="currentColor"/>
+                </svg>
+            </span>
+            <span class="brand__name brand__name--lg">ValuGauge</span>
+        </div>
+
+        <div class="auth__gauge">
+            <svg viewBox="0 0 240 150" class="gauge gauge--decorative">
+                <path d="M20 130 A100 100 0 0 1 220 130" fill="none" stroke="#2A2F38" stroke-width="14" stroke-linecap="round"/>
+                <path d="M20 130 A100 100 0 0 1 160 38" fill="none" stroke="#3DDC97" stroke-width="14" stroke-linecap="round"/>
+                <line x1="120" y1="130" x2="178" y2="62" stroke="#FF5A36" stroke-width="4" stroke-linecap="round"/>
+                <circle cx="120" cy="130" r="8" fill="#ECEEF1"/>
+                <text x="120" y="118" text-anchor="middle" class="gauge__readout">₹4.1L</text>
+            </svg>
+        </div>
+
+        <h1 class="auth__headline">Know what your car is worth before you list it.</h1>
+        <p class="auth__sub">ValuGauge reads your vehicle's make, model, age, mileage and fuel type and instantly returns a market-calibrated resale estimate &mdash; powered by a regression model trained on real listings.</p>
+
+        <ul class="auth__points">
+            <li>Instant resale price estimates</li>
+            <li>Saved valuation history per account</li>
+            <li>Built from real second-hand listing data</li>
+        </ul>
+    </div>
+
+    <div class="auth__panel auth__panel--form">
+        <div class="auth__card">
+            <h2 class="auth__title">Sign in</h2>
+            <p class="auth__caption">Enter your credentials to access the valuation tool.</p>
+
+            <form method="POST" action="{{ url_for('login') }}" class="form" novalidate>
+                <div class="field">
+                    <label for="identifier">Username or email</label>
+                    <input type="text" id="identifier" name="identifier" autocomplete="username" required autofocus>
+                </div>
+                <div class="field">
+                    <label for="password">Password</label>
+                    <div class="field__input-group">
+                        <input type="password" id="password" name="password" autocomplete="current-password" required>
+                        <button type="button" class="field__toggle" data-toggle-password="password" aria-label="Show password">Show</button>
+                    </div>
+                </div>
+                <label class="checkbox">
+                    <input type="checkbox" name="remember">
+                    <span>Keep me signed in on this device</span>
+                </label>
+
+                <button type="submit" class="btn btn--primary btn--block">Sign in</button>
+            </form>
+
+            <p class="auth__switch">New to ValuGauge? <a href="{{ url_for('signup') }}">Create an account</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
