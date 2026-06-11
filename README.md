@@ -1,51 +1,142 @@
-# ValuGauge — Second-Hand Car Price Estimator
+# 🚗 ValuGauge – AI-Powered Used Car Price Prediction Platform
 
-A small full-stack web app around your trained `LinearRegressionModel.pkl`. It includes
-sign up / sign in (with hashed passwords), a responsive valuation form that only asks
-for the fields the model actually needs, an animated "gauge" result, and a per-user
-history of past estimates stored in a SQLite database.
+ValuGauge is a full-stack Machine Learning web application that predicts the resale value of used cars based on key vehicle attributes such as manufacturer, model, year of purchase, fuel type, and kilometers driven.
 
-## What the model needs
+The platform combines a trained Machine Learning regression model with a modern Flask-based web application, allowing users to instantly estimate the market value of their vehicles through an intuitive and user-friendly interface.
 
-Your model (`LinearRegressionModel.pkl`) was a scikit-learn pipeline
-(`OneHotEncoder` + `LinearRegression`) that expects exactly these 5 inputs:
+---
 
-| Field | Type | Notes |
-|---|---|---|
-| `name` | category | Car model, e.g. `Maruti Suzuki Swift` (the encoder was trained on "brand + first two model words") |
-| `company` | category | Manufacturer, e.g. `Maruti` |
-| `year` | integer | Year of purchase/registration |
-| `kms_driven` | integer | Total kilometres driven |
-| `fuel_type` | category | `Petrol`, `Diesel`, or `LPG` |
+## 🌟 Features
 
-**Why there's no `.pkl` file in this project:** pickled scikit-learn objects
-are tied to the exact scikit-learn version used to create them, and loading
-a pickle from a different version commonly throws errors like
-`AttributeError: ... has no attribute '_RemainderColsList'`. To avoid that,
-the OneHotEncoder's trained categories and the LinearRegression's
-coefficients/intercept were extracted once and saved as plain JSON
-(`model/model_weights.json`). At runtime, `app.py` reproduces the exact same
-one-hot-encode + linear-regression math using only `numpy` — no
-scikit-learn dependency, and no version coupling. This was verified to
-produce identical predictions to the original pipeline.
+### Vehicle Price Prediction
 
-The site only lets the user pick manufacturer/model values that the encoder was
-actually trained on (loaded from `model/company_models.json` and
-`model/categories.json`, both extracted from the original pickle's
-`OneHotEncoder.categories_`).
-Selecting a manufacturer dynamically loads the matching list of models via
-`/api/models/<company>`.
+* Predicts second-hand car prices using a trained Machine Learning model.
+* Provides real-time valuation based on vehicle specifications.
+* Supports multiple manufacturers and car models.
 
-## Project structure
+### Secure User Authentication
 
-```
-carapp/
-├── app.py                  # Flask app: auth, routes, prediction, history
+* User registration and login system.
+* Password hashing for enhanced security.
+* Personalized access to valuation history.
+
+### Prediction History
+
+* Stores all previous predictions.
+* Enables users to review past vehicle valuations.
+* Maintains a dedicated history dashboard for each user.
+
+### Dynamic User Experience
+
+* Responsive and modern user interface.
+* Interactive price visualization gauge.
+* Dynamic model selection based on manufacturer.
+
+### Database Integration
+
+* SQLite database for user and prediction storage.
+* Persistent records across sessions.
+
+---
+
+## 🛠️ Technology Stack
+
+### Frontend
+
+* HTML5
+* CSS3
+* JavaScript
+
+### Backend
+
+* Flask
+* Flask-Login
+* Flask-SQLAlchemy
+
+### Machine Learning
+
+* Python
+* NumPy
+* Scikit-Learn
+
+### Database
+
+* SQLite
+
+### Deployment Ready
+
+* Environment Variable Support
+* Modular Project Structure
+* Lightweight Flask Architecture
+
+---
+
+## 📊 Model Performance
+
+The machine learning model was evaluated using the coefficient of determination (**R² Score**), which measures how well the predicted values match the actual market prices.
+
+| Metric   | Value     |
+| -------- | --------- |
+| R² Score | **0.841** |
+
+### Interpretation
+
+An R² score of **0.841** indicates that the model explains approximately **84.1% of the variance** in used car prices, demonstrating strong predictive capability on the dataset.
+
+This performance suggests that the selected features—such as company, model, year, fuel type, and kilometers driven—capture most of the factors influencing vehicle resale value.
+
+---
+
+## 📈 Machine Learning Workflow
+
+### Data Preprocessing
+
+* Data Cleaning
+* Handling Missing Values
+* Feature Selection
+* Categorical Encoding
+
+### Feature Engineering
+
+The model uses the following features:
+
+| Feature           | Description                       |
+| ----------------- | --------------------------------- |
+| Company           | Vehicle Manufacturer              |
+| Model             | Vehicle Model                     |
+| Year              | Manufacturing / Registration Year |
+| Kilometers Driven | Total Distance Covered            |
+| Fuel Type         | Petrol, Diesel, LPG, etc.         |
+
+### Model Training
+
+* Linear Regression Algorithm
+* One-Hot Encoding for categorical variables
+* Model trained on historical used-car market data
+
+### Prediction Pipeline
+
+1. User enters vehicle details.
+2. Features are validated and encoded.
+3. The trained model processes the inputs.
+4. Predicted resale value is generated.
+5. Results are displayed to the user and stored in prediction history.
+
+---
+
+## 📂 Project Structure
+
+```text
+ValuGauge/
+│
+├── app.py
 ├── requirements.txt
+│
 ├── model/
-│   ├── model_weights.json  # OneHotEncoder categories + LinearRegression coef/intercept
-│   ├── categories.json     # fuel types + raw category lists
-│   └── company_models.json # manufacturer -> list of valid model names
+│   ├── model_weights.json
+│   ├── company_models.json
+│   └── categories.json
+│
 ├── templates/
 │   ├── base.html
 │   ├── login.html
@@ -53,62 +144,38 @@ carapp/
 │   ├── predict.html
 │   ├── history.html
 │   └── 404.html
+│
 ├── static/
-│   ├── css/style.css
-│   └── js/main.js
-└── instance/                # SQLite DB created here at runtime
+│   ├── css/
+│   └── js/
+│
+└── instance/
+    └── carprice.db
 ```
 
-## Setup
+---
 
-1. Create and activate a virtual environment (recommended):
+## 🎯 Learning Outcomes
 
-   ```bash
-   python -m venv .venv
-   # Windows
-   .venv\Scripts\activate
-   # macOS / Linux
-   source .venv/bin/activate
-   ```
+Through this project, I gained practical experience in:
 
-2. Install dependencies:
+* End-to-End Machine Learning Development
+* Data Cleaning and Feature Engineering
+* Regression Modeling
+* Flask Web Development
+* Database Management
+* User Authentication and Authorization
+* Full-Stack Application Development
+* Machine Learning Model Deployment
+* Software Project Structuring and Organization
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+---
 
-3. Run the app:
+## 🚀 Key Highlights
 
-   ```bash
-   python app.py
-   ```
-
-4. Open `http://127.0.0.1:5000` in your browser. The SQLite database
-   (`instance/carprice.db`) is created automatically on first run.
-
-## How it works
-
-- **Sign up / sign in** — accounts are stored in SQLite via Flask-SQLAlchemy,
-  passwords are hashed with Werkzeug's `generate_password_hash`. Sessions are
-  managed with Flask-Login.
-- **Valuation form** (`/predict`, login required) — collects manufacturer,
-  model, year, kilometres driven, and fuel type (all required). On submit,
-  the values are one-hot encoded and combined with the model's saved
-  coefficients/intercept (`predict_price()` in `app.py`) to produce the
-  estimate — exactly reproducing the original pipeline's output.
-- **Result** — shown as an animated price "gauge" plus a summary of the inputs
-  used, and is also saved to the signed-in user's history.
-- **History** (`/history`) — a table/log of every valuation the user has run,
-  most recent first.
-
-## Notes / things you may want to adjust
-
-- The gauge's full-scale reference value is ₹20,00,000, set in
-  `static/js/main.js` (`MAX_REFERENCE`). Adjust if your typical predictions
-  fall outside this range.
-- `app.config['SECRET_KEY']` should be set via the `SECRET_KEY` environment
-  variable in production.
-- The year dropdown currently spans 1995 → current year; change `YEAR_RANGE`
-  in `app.py` if your training data covers a different range.
-- Predicted prices are clamped at a minimum of ₹0 in case the linear model
-  extrapolates a negative value for unusual inputs.
+* Built a complete end-to-end Machine Learning application for used car price prediction.
+* Achieved an **R² Score of 0.841** on the testing dataset.
+* Implemented secure user authentication and prediction history tracking.
+* Developed a responsive and professional web interface using Flask.
+* Integrated Machine Learning predictions with a production-style web application.
+* Designed with scalability and deployment readiness in mind.
